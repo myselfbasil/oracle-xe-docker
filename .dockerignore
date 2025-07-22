@@ -1,0 +1,72 @@
+# Docker ignore file for Oracle XE build
+
+# Exclude README files and documentation
+README*.md
+*.md
+
+# Exclude run scripts (not needed in container)
+run.sh
+run.bat
+
+# Exclude uninstall scripts
+uninstall.sh
+uninstall.bat
+
+# Exclude install scripts (only used outside container)
+install.sh
+install.bat
+
+# Exclude alternative docker-compose files
+docker-compose-*.yml
+
+# Exclude temporary files
+*.tmp
+*.log
+*.bak
+*~
+
+# Exclude OS specific files
+.DS_Store
+Thumbs.db
+
+# Exclude version control
+.git/
+.gitignore
+.gitattributes
+
+# Exclude IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Exclude backup files
+backup/
+*.backup
+
+# Exclude test files
+test/
+tests/
+*.test
+
+# Exclude local data directory
+data/
+
+# Exclude cache directories
+node_modules/
+.cache/
+
+# Exclude build artifacts
+build/
+dist/
+target/
+
+# Exclude environment files
+.env
+.env.local
+.env.production
+
+# Include only what we need:
+# - Dockerfile (implicit)
+# - entrypoint.sh
+# - scripts/ directory

@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  oracle-xe:
+    build: .
+    container_name: oracle-xe
+    hostname: oracle-xe
+    ports:
+      - "1521:1521"
+      - "5500:5500"
+    environment:
+      - ORACLE_PWD=${ORACLE_PWD:-OracleXE123!}
+      - ORACLE_CHARACTERSET=${ORACLE_CHARACTERSET:-AL32UTF8}
+      - ORACLE_SID=XE
+      - ORACLE_PDB=XEPDB1
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+      - ./scripts:/opt/oracle/scripts:ro
+    shm_size: 2g
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/opt/oracle/scripts/check_health.sh"]
+      interval: 30s
+      timeout: 10s
+      start_period: 5m
+      retries: 3
+    stdin_open: true
+    tty: true
+
+volumes:
+  oracle_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${ORACLE_DATA_PATH:-./data}
+
+networks:
+  default:
+    name: oracle-network
