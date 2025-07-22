@@ -115,7 +115,7 @@ uninstall.bat     # Windows
 ## File Structure
 
 ```
-sqlplus_docker/
+oracle-xe-docker/
 ├── install.sh          # Mac/Linux installation
 ├── install.bat         # Windows installation
 ├── run.sh              # Mac/Linux daily usage
