@@ -57,29 +57,20 @@ echo "=================================================="
 echo "Platform: $(uname -s) $(uname -m)"
 echo ""
 
-echo "⚠️  WARNING: This will completely remove:"
+echo "WARNING: This will completely remove:"
 echo "   • Oracle XE Docker container"
 echo "   • All database data (including your tables and data)"
 echo "   • Docker images and volumes"
-echo "   • All Oracle XE related files"
+echo "   • Configuration files"
 echo ""
-echo "💾 Your data will be permanently lost unless you have backups!"
-echo ""
-
-read -p "Are you sure you want to continue? (Type 'YES' to confirm): " -r
+echo "Your data will be permanently lost unless you have backups!"
 echo ""
 
-if [[ ! $REPLY == "YES" ]]; then
-    echo "❌ Uninstall cancelled."
-    exit 0
-fi
-
-echo "🔒 Final confirmation required."
-read -p "This action cannot be undone. Type 'DELETE EVERYTHING' to proceed: " -r
+read -p "Are you sure you want to continue? (y/n): " -n 1 -r
 echo ""
 
-if [[ ! $REPLY == "DELETE EVERYTHING" ]]; then
-    echo "❌ Uninstall cancelled for safety."
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Uninstall cancelled."
     exit 0
 fi
 
@@ -179,79 +170,29 @@ done
 
 echo "✅ Temporary files cleaned"
 
-# Step 6: Optional cleanup of installation files
-show_step_progress 6 6 "Optional File Cleanup"
+# Step 6: Cleanup configuration files only
+show_step_progress 6 6 "Removing Configuration Files"
 
-echo ""
-echo "🗂️  Installation Files:"
-echo "   • install.sh / install.bat"
-echo "   • uninstall.sh / uninstall.bat"
-echo "   • run.sh / run.bat"
-echo "   • Dockerfile and scripts"
-echo "   • README files"
-echo ""
+echo "🗑️  Removing configuration files..."
 
-read -p "Remove installation files too? (y/n): " -n 1 -r
-echo ""
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "🗑️  Removing installation files..."
-    
-    # Remove main files
-    files_to_remove=(
-        "install.sh"
-        "install.bat"
-        "uninstall.sh"
-        "uninstall.bat"
-        "run.sh"
-        "run.bat"
-        "Dockerfile"
-        "docker-compose.yml"
-        "docker-compose-prebuilt.yml"
-        "docker-compose-instant-client.yml"
-        "entrypoint.sh"
-        ".dockerignore"
-        "README.md"
-        "README_FULL.md"
-        "README_TROUBLESHOOTING.md"
-    )
-    
-    removed_files=0
-    for file in "${files_to_remove[@]}"; do
-        if [ -f "$file" ]; then
-            rm -f "$file" && ((removed_files++))
-        fi
-    done
-    
-    # Remove scripts directory
-    if [ -d "scripts" ]; then
-        rm -rf scripts && ((removed_files++))
-    fi
-    
-    for i in {1..10}; do
-        show_progress "$i" "10" "Removing Files"
-        sleep 0.1
-    done
-    
-    echo "✅ Removed $removed_files installation files"
-else
-    echo "ℹ️  Keeping installation files for future use"
-    for i in {1..10}; do
-        show_progress "$i" "10" "Skipping Cleanup"
-        sleep 0.05
-    done
+# Remove only configuration files, keep installation scripts
+removed_files=0
+if [ -f ".oracle_config" ]; then
+    rm -f ".oracle_config" && ((removed_files++))
 fi
+
+for i in {1..10}; do
+    show_progress "$i" "10" "Removing Config"
+    sleep 0.1
+done
+
+echo "✅ Removed configuration files (keeping installation scripts)"
 
 # Final cleanup - Docker system prune
 echo ""
-read -p "Run Docker system cleanup to free disk space? (y/n): " -n 1 -r
-echo ""
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "🧹 Running Docker system cleanup..."
-    docker system prune -f &>/dev/null || true
-    echo "✅ Docker cleanup completed"
-fi
+echo "🧹 Running Docker system cleanup..."
+docker system prune -f &>/dev/null || true
+echo "✅ Docker cleanup completed"
 
 # Final summary
 clear
@@ -262,11 +203,8 @@ echo "✅ Successfully removed:"
 echo "   • Oracle XE Docker container"
 echo "   • All database data and volumes"
 echo "   • Docker images"
+echo "   • Configuration files"
 echo "   • Temporary files"
-
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "   • Installation files"
-fi
 
 echo ""
 echo "💾 What was removed:"
@@ -276,8 +214,7 @@ echo "   • Images: Oracle XE Docker images"
 echo ""
 
 echo "🔄 To reinstall Oracle XE:"
-echo "   • Download the installation files again"
-echo "   • Run: ./install.sh (Mac/Linux) or install.bat (Windows)"
+echo "   • Run: ./install.sh (installation files preserved)"
 echo ""
 
 echo "📊 System Status:"
