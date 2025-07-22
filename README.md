@@ -1,6 +1,7 @@
 # Oracle Database XE with SQL*Plus - Docker Setup
 
 Tired of Oracle SQL Plus installation failures?
+
 Try this: A complete Docker-based Oracle Database Express Edition (XE) 21c with SQL*Plus, featuring cross-platform support and interactive setup. This project provides an easy way to get Oracle Database running locally for development and learning purposes.
 
 Avoid compatibility issues and manual setup errors. This solution provides:
